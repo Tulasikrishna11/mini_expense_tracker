@@ -119,3 +119,9 @@
     font-weight: bold; /* Bold text */
     color: #555;
 }
+
+.total-amount h3 {
+    font-size: 18px; /* Reduce the font size of the total amount */
+    text-align: center;
+    color: #333;
+}

@@ -62,11 +62,28 @@ const Dashboard = ({ onLogout }) => {
         }],
     };
 
+    const options = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const label = context.label || '';
+                        const percentage = insights[label].percentage;
+                        const totalAmount = insights[label].totalAmount;
+                        return `${label}: ${percentage}% (₹${totalAmount})`;
+                    }
+                }
+            }
+        }
+    };
+
     const handleExpenseAdded = () => {
         fetchExpenses();
         fetchInsights();
         setShowForm(false);
     };
+
+    const totalAmount = Object.values(insights).reduce((acc, insight) => acc + insight.totalAmount, 0);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -105,8 +122,11 @@ const Dashboard = ({ onLogout }) => {
                         <h2 className="insights-heading">Spending Insights</h2>
                         <div className="chart-wrapper">
                             <div className="chart-center">
-                                <Pie data={insightsData} />
+                                <Pie data={insightsData} options={options} />
                             </div>
+                        </div>
+                        <div className="total-amount">
+                            <h3>Total Amount: ₹{totalAmount}</h3>
                         </div>
                     </div>
                 </>
