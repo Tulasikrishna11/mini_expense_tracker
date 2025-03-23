@@ -38,3 +38,36 @@
 .expense-list td {
     color: #333;
 }
+
+.expenses-container {
+    margin-bottom: 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between; /* Ensure page count is on the left and buttons on the right */
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    width: fit-content; /* Set width to fit-content */
+    margin-left: 5px; /* Add gap between buttons */
+}
+
+.pagination button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-size: 12px; /* Make the page count text a bit smaller */
+    color: #333;
+}
