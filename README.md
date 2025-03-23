@@ -97,6 +97,5 @@ cd backend
 npm start
 ```
 
-
 ## Conclusion
 This project demonstrates a full-stack web application for tracking expenses with intelligent insights. It includes user authentication, expense management, and data visualization features.
