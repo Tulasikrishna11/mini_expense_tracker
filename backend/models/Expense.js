@@ -1,21 +1,25 @@
-const pool = require('../config/db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/sequelize');
+const User = require('./User');
 
-const Expense = {
-    create: async (userId, amount, description) => {
-        const res = await pool.query('INSERT INTO expenses (user_id, amount, description) VALUES ($1, $2, $3) RETURNING *', [userId, amount, description.toString()]);
-        return res.rows[0];
+const Expense = sequelize.define('Expense', {
+    amount: {
+        type: DataTypes.DECIMAL,
+        allowNull: false,
+        field: 'amount',
     },
-    findByUserId: async (userId) => {
-        const res = await pool.query('SELECT * FROM expenses WHERE user_id = $1', [userId]);
-        return res.rows;
+    description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'description',
     },
-    update: async (id, amount, description) => {
-        const res = await pool.query('UPDATE expenses SET amount = $1, description = $2 WHERE id = $3 RETURNING *', [amount, description.toString(), id]);
-        return res.rows[0];
-    },
-    delete: async (id) => {
-        await pool.query('DELETE FROM expenses WHERE id = $1', [id]);
-    }
-};
+}, {
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false,
+    tableName: 'Expenses',
+});
+
+Expense.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = Expense;

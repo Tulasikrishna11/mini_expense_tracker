@@ -1,22 +1,33 @@
-const pool = require('../config/db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/sequelize');
 
-const User = {
-    create: async (username, password) => {
-        const res = await pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password]);
-        return res.rows[0];
+const User = sequelize.define('User', {
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'first_name',
     },
-    findByUsername: async (username) => {
-        const res = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-        return res.rows[0];
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'last_name',
     },
-    findById: async (id) => {
-        const res = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-        return res.rows[0];
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        field: 'email',
     },
-    update: async (id, username, password) => {
-        const res = await pool.query('UPDATE users SET username = $1, password = $2 WHERE id = $3 RETURNING *', [username, password, id]);
-        return res.rows[0];
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'password',
     },
-};
+}, {
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false,
+    tableName: 'Users',
+});
 
 module.exports = User;

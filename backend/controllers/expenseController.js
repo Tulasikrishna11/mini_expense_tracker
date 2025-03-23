@@ -2,7 +2,7 @@ const Expense = require('../models/Expense');
 
 exports.getExpenses = async (req, res) => {
     try {
-        const expenses = await Expense.findByUserId(req.userId);
+        const expenses = await Expense.findAll({ where: { user_id: req.userId } });
         res.json(expenses);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -15,7 +15,7 @@ exports.addExpense = async (req, res) => {
         return res.status(400).json({ error: 'Amount must be a number' });
     }
     try {
-        const newExpense = await Expense.create(req.userId, amount, description);
+        const newExpense = await Expense.create({ user_id: req.userId, amount, description });
         res.status(201).json(newExpense);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -29,8 +29,15 @@ exports.updateExpense = async (req, res) => {
         return res.status(400).json({ error: 'Amount must be a number' });
     }
     try {
-        const expense = await Expense.update(id, amount, description);
-        res.json(expense);
+        const expense = await Expense.findByPk(id);
+        if (expense) {
+            expense.amount = amount;
+            expense.description = description;
+            await expense.save();
+            res.json(expense);
+        } else {
+            res.status(404).json({ error: 'Expense not found' });
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -39,8 +46,13 @@ exports.updateExpense = async (req, res) => {
 exports.deleteExpense = async (req, res) => {
     const { id } = req.params;
     try {
-        await Expense.delete(id);
-        res.status(204).send();
+        const expense = await Expense.findByPk(id);
+        if (expense) {
+            await expense.destroy();
+            res.status(204).send();
+        } else {
+            res.status(404).json({ error: 'Expense not found' });
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

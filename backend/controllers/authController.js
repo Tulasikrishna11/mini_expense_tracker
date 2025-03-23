@@ -1,31 +1,31 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('../db');
+const User = require('../models/User');
 
 exports.register = async (req, res) => {
-    const { username, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
-        const result = await pool.query(
-            'INSERT INTO Users (username, password) VALUES ($1, $2) RETURNING *',
-            [username, hashedPassword]
-        );
-        res.status(201).json(result.rows[0]);
+        const user = await User.create({ firstName, lastName, email, password: hashedPassword });
+        res.status(201).json(user);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
 exports.login = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
 
     try {
-        const result = await pool.query('SELECT * FROM Users WHERE username = $1', [username]);
-        const user = result.rows[0];
+        const user = await User.findOne({ where: { email } });
 
         if (user && await bcrypt.compare(password, user.password)) {
-            const token = jwt.sign({ id: user.id }, 'your_jwt_secret');
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
             res.json({ token });
         } else {
             res.status(401).json({ error: 'Invalid credentials' });
