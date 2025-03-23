@@ -1,33 +1,43 @@
 import React, { useState } from 'react';
 import axios from '../config/axiosConfig';
-import { useHistory } from 'react-router-dom';
-import './Register.css'; // Import the CSS file
+import { Link} from 'react-router-dom';
+import './Auth.css'; // Import the CSS file
 
-const Register = () => {
+const Register = ({ onRegister }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const history = useHistory();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
         try {
             await axios.post('/auth/register', { firstName, lastName, email, password });
-            history.push('/login');
-        } catch (error) {
-            alert('Registration failed');
+            onRegister();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <form className="register-form" onSubmit={handleSubmit}>
-            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />
-            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-            <button type="submit">Register</button>
-        </form>
+        <div className="auth-container">
+            <h2>Register</h2>
+            <form onSubmit={handleSubmit}>
+                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />
+                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
+                <button type="submit" disabled={loading}>{loading ? 'Registering...' : 'Register'}</button>
+                {error && <div className="error">{error}</div>}
+            </form>
+            <p>Already have an account? <Link to="/login">Login here</Link></p>
+        </div>
     );
 };
 

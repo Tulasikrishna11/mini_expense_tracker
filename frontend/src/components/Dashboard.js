@@ -5,7 +5,7 @@ import ExpenseList from './ExpenseList';
 import { Pie } from 'react-chartjs-2';
 import './Dashboard.css'; // Import the CSS file
 
-const Dashboard = () => {
+const Dashboard = ({ onLogout }) => {
     const [expenses, setExpenses] = useState([]);
     const [insights, setInsights] = useState({});
     const [loading, setLoading] = useState(true);
@@ -78,7 +78,10 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            <h1>Dashboard</h1>
+            <header className="dashboard-header">
+                <h1>Dashboard</h1>
+                <button className="logout-button" onClick={onLogout}>Logout</button>
+            </header>
             {showForm && (
                 <div className="modal">
                     <div className="modal-content">
@@ -101,7 +104,9 @@ const Dashboard = () => {
                     <div className="insights-chart">
                         <h2 className="insights-heading">Spending Insights</h2>
                         <div className="chart-wrapper">
-                            <Pie data={insightsData} />
+                            <div className="chart-center">
+                                <Pie data={insightsData} />
+                            </div>
                         </div>
                     </div>
                 </>

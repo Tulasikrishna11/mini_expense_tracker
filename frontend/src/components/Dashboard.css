@@ -7,9 +7,31 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard h1 {
-    text-align: center;
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
+}
+
+.dashboard h1 {
+    margin: 0;
+}
+
+.logout-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 14px; /* Make the button smaller */
+    padding: 5px 10px; /* Adjust padding */
+    border-radius: 4px;
+    width: fit-content; /* Fit the button to its content */
+    margin-left: auto; /* Align to the right */
+}
+
+.logout-button:hover {
+    background-color: #d32f2f;
 }
 
 .dashboard .chart-container {
