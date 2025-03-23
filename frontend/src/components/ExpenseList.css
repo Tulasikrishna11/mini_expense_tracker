@@ -1,3 +1,15 @@
+:root {
+    --primary-color: #4CAF50;
+    --primary-color-hover: #45a049;
+    --secondary-color: #f44336;
+    --secondary-color-hover: #d32f2f;
+    --background-color: #fff;
+    --text-color: #333;
+    --text-color-light: #666;
+    --border-color: #ddd;
+    --box-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 .expense-list {
     margin-bottom: 20px;
     font-family: Arial, sans-serif;
@@ -11,7 +23,7 @@
 }
 
 .add-expense-button {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     cursor: pointer;
@@ -21,7 +33,7 @@
 }
 
 .add-expense-button:hover {
-    background-color: #45a049;
+    background-color: var(--primary-color-hover);
 }
 
 .expense-list h2 {
@@ -32,18 +44,18 @@
 .expense-list table {
     width: 100%;
     border-collapse: collapse;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px var(--box-shadow-color);
 }
 
 .expense-list th, .expense-list td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     padding: 12px 15px;
     text-align: left;
     transition: background-color 0.3s ease;
 }
 
 .expense-list th {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
     font-weight: bold;
 }
@@ -57,7 +69,7 @@
 }
 
 .expense-list td {
-    color: #333;
+    color: var(--text-color);
 }
 
 .filters {
@@ -75,13 +87,13 @@
 
 .filters .category-filter select {
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
 }
 
 .filters .date-filter .date-fieldset {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 5px;
     font-size: 14px;
@@ -89,7 +101,7 @@
 
 .filters .date-filter .date-fieldset legend {
     font-size: 12px;
-    color: #333;
+    color: var(--text-color);
 }
 
 .filters .date-filter input {
@@ -101,7 +113,7 @@
 
 .filters .date-label {
     font-size: 14px;
-    color: #333;
+    color: var(--text-color);
 }
 
 .expenses-container {
@@ -116,7 +128,7 @@
 }
 
 .pagination button {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
     padding: 5px 10px;
     border: none;
@@ -134,7 +146,7 @@
 
 .pagination span {
     font-size: 12px; /* Make the page count text a bit smaller */
-    color: #333;
+    color: var(--text-color);
 }
 
 .no-expenses {
@@ -145,5 +157,5 @@
 .no-expenses p {
     font-size: 14px; /* Small text size */
     font-weight: bold; /* Bold text */
-    color: #555;
+    color: var(--text-color-light);
 }

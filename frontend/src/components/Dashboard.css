@@ -1,10 +1,22 @@
+:root {
+    --primary-color: #4CAF50;
+    --primary-color-hover: #45a049;
+    --secondary-color: #f44336;
+    --secondary-color-hover: #d32f2f;
+    --background-color: #fff;
+    --text-color: #333;
+    --text-color-light: #666;
+    --border-color: #ddd;
+    --box-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 .dashboard {
     max-width: 1200px; /* Increase the max-width for larger screens */
     margin: 50px auto;
     padding: 20px;
-    background: #fff;
+    background: var(--background-color);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px var(--box-shadow-color);
 }
 
 .dashboard-header {
@@ -35,7 +47,7 @@
 }
 
 .logout-button {
-    background-color: #f44336;
+    background-color: var(--secondary-color);
     color: white;
     border: none;
     cursor: pointer;
@@ -47,7 +59,7 @@
 }
 
 .logout-button:hover {
-    background-color: #d32f2f;
+    background-color: var(--secondary-color-hover);
 }
 
 .dashboard .chart-container {
@@ -62,7 +74,7 @@
 }
 
 .add-expense-button {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     cursor: pointer;
@@ -72,7 +84,7 @@
 }
 
 .add-expense-button:hover {
-    background-color: #45a049;
+    background-color: var(--primary-color-hover);
 }
 
 .modal {
@@ -90,13 +102,13 @@
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: var(--background-color);
     padding: 20px;
-    border: 1px solid #888;
+    border: 1px solid var(--border-color);
     width: 80%;
     max-width: 500px;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px var(--box-shadow-color);
 }
 
 .close {
@@ -132,13 +144,13 @@
 .no-expenses p {
     font-size: 14px; /* Small text size */
     font-weight: bold; /* Bold text */
-    color: #555;
+    color: var(--text-color-light);
 }
 
 .total-amount h3 {
     font-size: 18px; /* Reduce the font size of the total amount */
     text-align: center;
-    color: #333;
+    color: var(--text-color);
 }
 
 .dashboard-content {
@@ -154,17 +166,17 @@
 }
 
 .expense-list {
-    background: #fff;
+    background: var(--background-color);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px var(--box-shadow-color);
     padding: 20px;
     margin-bottom: 20px;
 }
 
 .insights-chart {
-    background: #fff;
+    background: var(--background-color);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px var(--box-shadow-color);
     padding: 20px;
     margin-bottom: 20px;
 }

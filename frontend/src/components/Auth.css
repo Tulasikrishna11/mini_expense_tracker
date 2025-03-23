@@ -1,10 +1,22 @@
+:root {
+    --primary-color: #4CAF50;
+    --primary-color-hover: #45a049;
+    --secondary-color: #f44336;
+    --secondary-color-hover: #d32f2f;
+    --background-color: #fff;
+    --text-color: #333;
+    --text-color-light: #666;
+    --border-color: #ddd;
+    --box-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 .auth-container {
     max-width: 400px;
     margin: 50px auto;
     padding: 20px;
-    background: #fff;
+    background: var(--background-color);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px var(--box-shadow-color);
     text-align: center;
 }
 
@@ -20,14 +32,14 @@
 .auth-container input {
     margin-bottom: 15px;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 16px;
 }
 
 .auth-container button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--background-color);
     padding: 10px 20px;
     border: none;
     cursor: pointer;
@@ -36,10 +48,10 @@
 }
 
 .auth-container button:hover {
-    background-color: #45a049;
+    background-color: var(--primary-color-hover);
 }
 
 .auth-container .error {
-    color: red;
+    color: var(--secondary-color);
     margin-top: 10px;
 }
