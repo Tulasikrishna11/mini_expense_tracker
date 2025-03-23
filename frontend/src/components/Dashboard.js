@@ -3,7 +3,7 @@ import axios from '../config/axiosConfig';
 import ExpenseForm from './ExpenseForm';
 import ExpenseList from './ExpenseList';
 import { Pie } from 'react-chartjs-2';
-import { FaUserCircle } from 'react-icons/fa'; // Import the profile icon
+import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa'; // Import the profile and logout icons
 import './Dashboard.css'; // Import the CSS file
 
 const Dashboard = ({ onLogout }) => {
@@ -106,7 +106,7 @@ const Dashboard = ({ onLogout }) => {
                 <div className="user-info">
                     <FaUserCircle className="profile-icon" />
                     <span className="username">{username}</span>
-                    <button className="logout-button" onClick={onLogout}>Logout</button>
+                    <FaSignOutAlt className="logout-icon" onClick={onLogout} />
                 </div>
             </header>
             {showForm && (

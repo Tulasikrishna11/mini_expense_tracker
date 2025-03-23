@@ -62,6 +62,16 @@
     background-color: var(--secondary-color-hover);
 }
 
+.logout-icon {
+    font-size: 24px;
+    color: #8B0000; 
+    cursor: pointer;
+}
+
+.logout-icon:hover {
+    color: var(--secondary-color);
+}
+
 .dashboard .chart-container {
     margin-top: 20px;
 }
