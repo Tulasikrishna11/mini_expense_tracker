@@ -25,12 +25,18 @@ exports.login = async (req, res) => {
         const user = await User.findOne({ where: { email } });
 
         if (user && await bcrypt.compare(password, user.password)) {
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-            res.json({ token });
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            res.cookie('token', token, { httpOnly: true });
+            res.json({ message: 'Login successful' });
         } else {
             res.status(401).json({ error: 'Invalid credentials' });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie('token');
+    res.json({ message: 'Logout successful' });
 };

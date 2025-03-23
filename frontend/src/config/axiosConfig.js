@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const instance = axios.create({
     baseURL: `${window.location.origin}`,
+    withCredentials: true, // Add this line to send cookies with requests
 });
 
 instance.interceptors.request.use(config => {
