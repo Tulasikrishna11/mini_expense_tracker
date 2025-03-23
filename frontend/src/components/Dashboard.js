@@ -124,23 +124,27 @@ const Dashboard = ({ onLogout }) => {
                 </div>
             ) : (
                 <>
-                    <div className="header">
-                        <button className="add-expense-button" onClick={() => setShowForm(true)}>Add Expense</button>
-                    </div>
-                    <ExpenseList expenses={expenses} setExpenses={setExpenses} setFilteredExpenses={setFilteredExpenses} />
-                    {filteredExpenses.length > 0 && (
-                        <div className="insights-chart">
-                            <h2 className="insights-heading">Spending Insights</h2>
-                            <div className="chart-wrapper">
-                                <div className="chart-center">
-                                    <Pie data={insightsData} options={options} />
+                    <div className="dashboard-content">
+                        <ExpenseList
+                            expenses={expenses}
+                            setExpenses={setExpenses}
+                            setFilteredExpenses={setFilteredExpenses}
+                            onAddExpense={() => setShowForm(true)}
+                        />
+                        {filteredExpenses.length > 0 && (
+                            <div className="insights-chart">
+                                <h2 className="insights-heading">Spending Insights</h2>
+                                <div className="chart-wrapper">
+                                    <div className="chart-center">
+                                        <Pie data={insightsData} options={options} />
+                                    </div>
+                                </div>
+                                <div className="total-amount">
+                                    <h3>Total Amount: ₹{totalAmount}</h3>
                                 </div>
                             </div>
-                            <div className="total-amount">
-                                <h3>Total Amount: ₹{totalAmount}</h3>
-                            </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </>
             )}
         </div>

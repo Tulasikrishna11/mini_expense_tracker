@@ -4,7 +4,7 @@ import EditExpenseForm from './EditExpenseForm';
 import { deleteExpense, getExpenses } from '../api/expenses';
 import './ExpenseList.css'; // Import the CSS file
 
-const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
+const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses, onAddExpense }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [categoryFilter, setCategoryFilter] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -68,7 +68,10 @@ const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
 
     return (
         <div className="expense-list">
-            <h2>Expenses</h2>
+            <div className="expense-list-header">
+                <h2>Expenses</h2>
+                <button className="add-expense-button" onClick={onAddExpense}>Add Expense</button>
+            </div>
             <div className="filters">
                 <div className="filter-row category-filter">
                     <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>

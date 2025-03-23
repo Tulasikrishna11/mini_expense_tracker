@@ -1,5 +1,5 @@
 .dashboard {
-    max-width: 800px;
+    max-width: 1200px; /* Increase the max-width for larger screens */
     margin: 50px auto;
     padding: 20px;
     background: #fff;
@@ -11,7 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .dashboard h1 {
@@ -139,4 +139,49 @@
     font-size: 18px; /* Reduce the font size of the total amount */
     text-align: center;
     color: #333;
+}
+
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.expense-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.expense-list {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.insights-chart {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .dashboard-content {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .expense-list {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .insights-chart {
+        flex: 1;
+        max-width: 400px; /* Ensure the chart does not exceed this width */
+    }
 }
