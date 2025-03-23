@@ -3,6 +3,7 @@ import axios from '../config/axiosConfig';
 import ExpenseForm from './ExpenseForm';
 import ExpenseList from './ExpenseList';
 import { Pie } from 'react-chartjs-2';
+import { FaUserCircle } from 'react-icons/fa'; // Import the profile icon
 import './Dashboard.css'; // Import the CSS file
 
 const Dashboard = ({ onLogout }) => {
@@ -11,6 +12,7 @@ const Dashboard = ({ onLogout }) => {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
+    const [username, setUsername] = useState(''); // Add state for username
 
     const fetchExpenses = async () => {
         const token = localStorage.getItem('token');
@@ -24,10 +26,23 @@ const Dashboard = ({ onLogout }) => {
         }
     };
 
+    const fetchUser = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.get('/auth/user', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setUsername(response.data.firstName); // Set the username
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             await fetchExpenses();
+            await fetchUser(); // Fetch the user data
             setLoading(false);
         };
         fetchData();
@@ -88,7 +103,11 @@ const Dashboard = ({ onLogout }) => {
         <div className="dashboard">
             <header className="dashboard-header">
                 <h1>Dashboard</h1>
-                <button className="logout-button" onClick={onLogout}>Logout</button>
+                <div className="user-info">
+                    <FaUserCircle className="profile-icon" />
+                    <span className="username">{username}</span>
+                    <button className="logout-button" onClick={onLogout}>Logout</button>
+                </div>
             </header>
             {showForm && (
                 <div className="modal">

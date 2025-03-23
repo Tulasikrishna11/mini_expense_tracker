@@ -40,3 +40,17 @@ exports.logout = (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
 };
+
+exports.getUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            attributes: ['firstName', 'lastName', 'email']
+        });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
