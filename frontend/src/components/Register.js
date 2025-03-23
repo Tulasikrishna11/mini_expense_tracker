@@ -20,7 +20,11 @@ const Register = () => {
             await axios.post('/auth/register', { firstName, lastName, email, password });
             history.push('/login'); // Redirect to login page after successful registration
         } catch (err) {
-            setError(err.message);
+            if (err.response && err.response.status === 400) {
+                setError('User is already registered');
+            } else {
+                setError('Registration failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

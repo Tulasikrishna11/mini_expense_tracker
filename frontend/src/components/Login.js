@@ -16,9 +16,12 @@ const Login = ({ onLogin }) => {
         try {
             const response = await axios.post('/auth/login', { email, password });
             onLogin(response.data.token);
-
         } catch (err) {
-            setError(err.message);
+            if (err.response && err.response.status === 404) {
+                setError('Invalid credentials'); 
+            } else {
+                setError('An error occurred. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
