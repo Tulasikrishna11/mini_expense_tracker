@@ -108,7 +108,7 @@ const Dashboard = ({ onLogout }) => {
                     <div className="header">
                         <button className="add-expense-button" onClick={() => setShowForm(true)}>Add Expense</button>
                     </div>
-                    <ExpenseList expenses={expenses} setFilteredExpenses={setFilteredExpenses} />
+                    <ExpenseList expenses={expenses} setExpenses={setExpenses} setFilteredExpenses={setFilteredExpenses} />
                     {filteredExpenses.length > 0 && (
                         <div className="insights-chart">
                             <h2 className="insights-heading">Spending Insights</h2>

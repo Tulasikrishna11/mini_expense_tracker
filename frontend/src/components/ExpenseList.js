@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Expense from './Expense';
+import { deleteExpense, getExpenses } from '../api/expenses';
 import './ExpenseList.css'; // Import the CSS file
 
-const ExpenseList = ({ expenses, setFilteredExpenses }) => {
+const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [categoryFilter, setCategoryFilter] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [filteredExpenses, setLocalFilteredExpenses] = useState([]);
     const expensesPerPage = 5;
 
-    // Filter expenses based on category and date range
-    const filteredExpenses = expenses.filter(expense => {
-        const matchesCategory = categoryFilter ? expense.category === categoryFilter : true;
-        const matchesStartDate = startDate ? new Date(expense.date) >= new Date(startDate) : true;
-        const matchesEndDate = endDate ? new Date(expense.date) <= new Date(endDate) : true;
-        return matchesCategory && matchesStartDate && matchesEndDate;
-    });
-
     useEffect(() => {
-        setFilteredExpenses(filteredExpenses);
+        const filterExpenses = () => {
+            const filtered = expenses.filter(expense => {
+                const matchesCategory = categoryFilter ? expense.category === categoryFilter : true;
+                const matchesStartDate = startDate ? new Date(expense.date) >= new Date(startDate) : true;
+                const matchesEndDate = endDate ? new Date(expense.date) <= new Date(endDate) : true;
+                return matchesCategory && matchesStartDate && matchesEndDate;
+            });
+            setLocalFilteredExpenses(filtered);
+            setFilteredExpenses(filtered);
+        };
+        filterExpenses();
     }, [categoryFilter, startDate, endDate, expenses, setFilteredExpenses]);
 
     // Calculate the current expenses to display
@@ -39,6 +43,20 @@ const ExpenseList = ({ expenses, setFilteredExpenses }) => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await deleteExpense(id);
+            const updatedExpenses = await getExpenses();
+            setExpenses(updatedExpenses);
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+        }
+    };
+
+    const handleEdit = (id) => {
+        // Define the handleEdit function logic here
     };
 
     return (
@@ -75,7 +93,11 @@ const ExpenseList = ({ expenses, setFilteredExpenses }) => {
                 <>
                     <div className="expenses-container">
                         {currentExpenses.map(expense => (
-                            <Expense key={expense.id} expense={expense} />
+                            <Expense
+                                key={expense.id}
+                                expense={expense}
+                                onDelete={handleDelete}
+                                onEdit={handleEdit} />
                         ))}
                     </div>
                     <div className="pagination">
