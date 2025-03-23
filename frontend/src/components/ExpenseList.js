@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Expense from './Expense';
+import EditExpenseForm from './EditExpenseForm';
 import { deleteExpense, getExpenses } from '../api/expenses';
 import './ExpenseList.css'; // Import the CSS file
 
@@ -9,6 +10,7 @@ const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [filteredExpenses, setLocalFilteredExpenses] = useState([]);
+    const [editingExpense, setEditingExpense] = useState(null);
     const expensesPerPage = 5;
 
     useEffect(() => {
@@ -55,8 +57,13 @@ const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
         }
     };
 
-    const handleEdit = (id) => {
-        // Define the handleEdit function logic here
+    const handleEdit = (expense) => {
+        setEditingExpense(expense);
+    };
+
+    const handleExpenseUpdated = async () => {
+        const updatedExpenses = await getExpenses();
+        setExpenses(updatedExpenses);
     };
 
     return (
@@ -97,7 +104,7 @@ const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
                                 key={expense.id}
                                 expense={expense}
                                 onDelete={handleDelete}
-                                onEdit={handleEdit} />
+                                onEdit={() => handleEdit(expense)} />
                         ))}
                     </div>
                     <div className="pagination">
@@ -108,6 +115,18 @@ const ExpenseList = ({ expenses, setExpenses, setFilteredExpenses }) => {
                         </div>
                     </div>
                 </>
+            )}
+            {editingExpense && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={() => setEditingExpense(null)}>&times;</span>
+                        <EditExpenseForm
+                            expense={editingExpense}
+                            onExpenseUpdated={handleExpenseUpdated}
+                            onClose={() => setEditingExpense(null)}
+                        />
+                    </div>
+                </div>
             )}
         </div>
     );
