@@ -1,4 +1,5 @@
 import React from 'react';
+import Expense from './Expense';
 import './ExpenseList.css'; // Import the CSS file
 
 const ExpenseList = ({ expenses }) => {
@@ -8,26 +9,11 @@ const ExpenseList = ({ expenses }) => {
             {expenses.length === 0 ? (
                 <p>No expenses available. Please add some expenses to get started.</p>
             ) : (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Category</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {expenses.map(expense => (
-                            <tr key={expense.id}>
-                                <td>{new Date(expense.date).toLocaleDateString()}</td>
-                                <td>{expense.amount}</td>
-                                <td>{expense.category}</td>
-                                <td>{expense.description}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div className="expenses-container">
+                    {expenses.map(expense => (
+                        <Expense key={expense.id} expense={expense} />
+                    ))}
+                </div>
             )}
         </div>
     );

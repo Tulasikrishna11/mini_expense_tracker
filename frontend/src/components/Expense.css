@@ -1,0 +1,105 @@
+.expense {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 10px 0;
+    background: #f9f9f9;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.expense-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.expense-amount {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.expense-date, .expense-category {
+    font-size: 14px;
+    color: #666;
+}
+
+.expense-description {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+    text-align: center; /* Center the description */
+}
+
+.expense-actions {
+    display: flex;
+    gap: 5px; /* Keep edit and delete icons together */
+}
+
+.edit-icon, .delete-icon {
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+    color: #4CAF50; /* Green color for edit icon */
+}
+
+.delete-icon:hover {
+    color: #f44336; /* Red color for delete icon */
+}
+
+.expense-card {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 10px 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.expense-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.expense-amount-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Add space between amount and icons */
+}
+
+.expense-amount {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.expense-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.expense-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expense-category, .expense-date, .expense-description {
+    font-size: 14px;
+    color: #666;
+}
+
+.expense-category {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
