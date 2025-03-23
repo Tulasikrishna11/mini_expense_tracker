@@ -1,27 +1,47 @@
 const Expense = require('../models/Expense');
 
-exports.addExpense = async (req, res) => {
-    const { amount, description } = req.body;
-    const userId = req.user.id; // Assuming user ID is available in req.user
-    const expense = await Expense.create(userId, amount, description);
-    res.status(201).json(expense);
+exports.getExpenses = async (req, res) => {
+    try {
+        const expenses = await Expense.findByUserId(req.userId);
+        res.json(expenses);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };
 
-exports.getExpenses = async (req, res) => {
-    const userId = req.user.id;
-    const expenses = await Expense.findByUserId(userId);
-    res.json(expenses);
+exports.addExpense = async (req, res) => {
+    const { description, amount } = req.body;
+    if (isNaN(amount)) {
+        return res.status(400).json({ error: 'Amount must be a number' });
+    }
+    try {
+        const newExpense = await Expense.create(req.userId, amount, description);
+        res.status(201).json(newExpense);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };
 
 exports.updateExpense = async (req, res) => {
     const { amount, description } = req.body;
     const { id } = req.params;
-    const expense = await Expense.update(id, amount, description);
-    res.json(expense);
+    if (isNaN(amount)) {
+        return res.status(400).json({ error: 'Amount must be a number' });
+    }
+    try {
+        const expense = await Expense.update(id, amount, description);
+        res.json(expense);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };
 
 exports.deleteExpense = async (req, res) => {
     const { id } = req.params;
-    await Expense.delete(id);
-    res.status(204).send();
+    try {
+        await Expense.delete(id);
+        res.status(204).send();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };

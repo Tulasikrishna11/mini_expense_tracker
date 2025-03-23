@@ -2,7 +2,7 @@ const pool = require('../config/db');
 
 const Expense = {
     create: async (userId, amount, description) => {
-        const res = await pool.query('INSERT INTO expenses (user_id, amount, description) VALUES ($1, $2, $3) RETURNING *', [userId, amount, description]);
+        const res = await pool.query('INSERT INTO expenses (user_id, amount, description) VALUES ($1, $2, $3) RETURNING *', [userId, amount, description.toString()]);
         return res.rows[0];
     },
     findByUserId: async (userId) => {
@@ -10,7 +10,7 @@ const Expense = {
         return res.rows;
     },
     update: async (id, amount, description) => {
-        const res = await pool.query('UPDATE expenses SET amount = $1, description = $2 WHERE id = $3 RETURNING *', [amount, description, id]);
+        const res = await pool.query('UPDATE expenses SET amount = $1, description = $2 WHERE id = $3 RETURNING *', [amount, description.toString(), id]);
         return res.rows[0];
     },
     delete: async (id) => {
