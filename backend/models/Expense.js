@@ -1,7 +1,34 @@
-const { DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const Expense = sequelize.define('Expense', {
+class Expense extends Model {
+    static async calculateSpendingInsights(userId) {
+        const expenses = await this.findAll({
+            where: { userId },
+            attributes: [
+                'category',
+                [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount']
+            ],
+            group: ['category']
+        });
+
+        const totalSpending = expenses.reduce((acc, expense) => acc + parseFloat(expense.dataValues.totalAmount), 0);
+
+        const insights = {};
+        expenses.forEach(expense => {
+            const category = expense.category;
+            const totalAmount = parseFloat(expense.dataValues.totalAmount);
+            insights[category] = {
+                totalAmount,
+                percentage: ((totalAmount / totalSpending) * 100).toFixed(2)
+            };
+        });
+
+        return insights;
+    }
+}
+
+Expense.init({
     userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -32,6 +59,8 @@ const Expense = sequelize.define('Expense', {
         field: 'created_at',
     },
 }, {
+    sequelize,
+    modelName: 'Expense',
     timestamps: false,
     tableName: 'Expenses',
 });

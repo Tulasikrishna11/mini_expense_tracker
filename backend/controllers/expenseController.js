@@ -62,3 +62,9 @@ exports.deleteExpense = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+exports.getSpendingInsights = async (req, res) => {
+    const userId = req.user.id;
+    const insights = await Expense.calculateSpendingInsights(userId);
+    res.json({ insights });
+};

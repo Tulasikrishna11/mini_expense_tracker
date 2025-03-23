@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../config/axiosConfig';
 import ExpenseForm from './ExpenseForm';
-import { Bar } from 'react-chartjs-2';
-import ExpenseChart from './ExpenseChart';
+import { Bar, Pie } from 'react-chartjs-2';
 import './Dashboard.css'; // Import the CSS file
 
 const Dashboard = () => {
     const [expenses, setExpenses] = useState([]);
+    const [insights, setInsights] = useState({});
 
     const fetchExpenses = async () => {
         const token = localStorage.getItem('token');
@@ -16,8 +16,17 @@ const Dashboard = () => {
         setExpenses(response.data);
     };
 
+    const fetchInsights = async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/expenses/insights', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setInsights(response.data.insights);
+    };
+
     useEffect(() => {
         fetchExpenses();
+        fetchInsights();
     }, []);
 
     const data = {
@@ -29,18 +38,33 @@ const Dashboard = () => {
         }],
     };
 
-    const sampleData = [
-        { category: 'Food', amount: 200 },
-        { category: 'Transport', amount: 100 },
-        { category: 'Entertainment', amount: 150 },
-    ];
+    const insightsData = {
+        labels: Object.keys(insights),
+        datasets: [{
+            label: 'Spending Insights',
+            data: Object.values(insights).map(insight => insight.totalAmount),
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+            ],
+        }],
+    };
+
+    const handleExpenseAdded = () => {
+        fetchExpenses();
+        fetchInsights();
+    };
 
     return (
         <div className="dashboard">
             <h1>Dashboard</h1>
-            <ExpenseForm onExpenseAdded={fetchExpenses} />
+            <ExpenseForm onExpenseAdded={handleExpenseAdded} />
             <Bar data={data} />
-            <ExpenseChart data={sampleData} />
+            <Pie data={insightsData} />
         </div>
     );
 };
