@@ -10,6 +10,8 @@ const ExpenseForm = ({ onExpenseAdded }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    const categories = ['Food', 'Travel', 'Entertainment', 'Health', 'Utilities', 'Other'];
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -34,9 +36,14 @@ const ExpenseForm = ({ onExpenseAdded }) => {
     return (
         <form className="expense-form" onSubmit={handleSubmit}>
             <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" required />
-            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" required />
-            <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" required />
+            <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+                <option value="" disabled>Select Category</option>
+                {categories.map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                ))}
+            </select>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} placeholder="Date" required />
+            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (optional)" />
             <button type="submit" disabled={loading}>{loading ? 'Adding...' : 'Add Expense'}</button>
             {error && <div className="error">{error}</div>}
         </form>

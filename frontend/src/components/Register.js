@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import axios from '../config/axiosConfig';
-import { Link} from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './Auth.css'; // Import the CSS file
 
-const Register = ({ onRegister }) => {
+const Register = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const history = useHistory();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,7 +18,7 @@ const Register = ({ onRegister }) => {
         setError(null);
         try {
             await axios.post('/auth/register', { firstName, lastName, email, password });
-            onRegister();
+            history.push('/login'); // Redirect to login page after successful registration
         } catch (err) {
             setError(err.message);
         } finally {

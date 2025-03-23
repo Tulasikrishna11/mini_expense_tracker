@@ -21,13 +21,10 @@ const App = () => {
         <Router>
             <Switch>
                 <Route path="/login">
-                    {token ? <Redirect to="/dashboard" /> : <Login onLogin={(token) => {
-                        handleLogin(token);
-                        <Redirect to="/dashboard" />
-                    }} />}
+                    {token ? <Redirect to="/dashboard" /> : <Login onLogin={handleLogin} />}
                 </Route>
                 <Route path="/register">
-                    {token ? <Redirect to="/dashboard" /> : <Register onRegister={() => <Redirect to="/login" />} />}
+                    {token ? <Redirect to="/dashboard" /> : <Register />}
                 </Route>
                 <Route path="/dashboard">
                     {token ? <Dashboard onLogout={handleLogout} /> : <Redirect to="/login" />}
