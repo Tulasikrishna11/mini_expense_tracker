@@ -1,35 +1,20 @@
-### Project Structure
+# Mini Expense Tracker with Intelligent Insights
 
-```
-expense-tracker/
-├── backend/
-│   ├── config/
-│   │   └── db.js
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   └── expenseController.js
-│   ├── models/
-│   │   ├── User.js
-│   │   └── Expense.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   └── expenseRoutes.js
-│   ├── middleware/
-│   │   └── authMiddleware.js
-│   ├── server.js
-│   └── package.json
-└── frontend/
-    ├── public/
-    ├── src/
-    │   ├── components/
-    │   │   ├── Dashboard.js
-    │   │   ├── Login.js
-    │   │   ├── Register.js
-    │   │   └── ExpenseForm.js
-    │   ├── App.js
-    │   ├── index.js
-    │   └── package.json
-```
+## Overview
+The Mini Expense Tracker is a web application that allows users to securely authenticate, manage their expenses, and gain insights into their spending patterns. The application is built using ReactJS for the frontend and NodeJS for the backend, with PostgreSQL as the database.
+
+## Features
+- **User Authentication**: Secure JWT-based authentication with HTTP-only cookies.
+- **Expense Management**: Add, update, delete, and view expenses.
+- **Spending Insights**: Visualize spending patterns with charts.
+- **Filters and Pagination**: Filter expenses by category and date range, with pagination support.
+
+## Tech Stack
+- **Frontend**: ReactJS
+- **Backend**: NodeJS
+- **Database**: PostgreSQL using Sequelize ORM
+
+## Setup Instructions
 
 ### Backend Setup
 
@@ -42,167 +27,25 @@ npm init -y
 npm install express pg bcryptjs jsonwebtoken cors dotenv
 ```
 
-2. **Database Configuration (`config/db.js`)**
+2. **Database Configuration**
 
-```javascript
-const { Pool } = require('pg');
-const pool = new Pool({
-    user: 'your_db_user',
-    host: 'localhost',
-    database: 'expense_tracker',
-    password: 'your_db_password',
-    port: 5432,
-});
+Configure the database connection in `config/db.js`.
 
-module.exports = pool;
-```
+3. **User and Expense Models**
 
-3. **User and Expense Models (`models/User.js` and `models/Expense.js`)**
+Create the user and expense models in `models/User.js` and `models/Expense.js`.
 
-```javascript
-// models/User.js
-const pool = require('../config/db');
+4. **Controllers**
 
-const User = {
-    create: async (username, password) => {
-        const res = await pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password]);
-        return res.rows[0];
-    },
-    findByUsername: async (username) => {
-        const res = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-        return res.rows[0];
-    },
-};
+Implement the authentication and expense controllers in `controllers/authController.js` and `controllers/expenseController.js`.
 
-module.exports = User;
+5. **Routes**
 
-// models/Expense.js
-const pool = require('../config/db');
+Set up the authentication and expense routes in `routes/authRoutes.js` and `routes/expenseRoutes.js`.
 
-const Expense = {
-    create: async (userId, amount, description) => {
-        const res = await pool.query('INSERT INTO expenses (user_id, amount, description) VALUES ($1, $2, $3) RETURNING *', [userId, amount, description]);
-        return res.rows[0];
-    },
-    findByUserId: async (userId) => {
-        const res = await pool.query('SELECT * FROM expenses WHERE user_id = $1', [userId]);
-        return res.rows;
-    },
-};
+6. **Middleware**
 
-module.exports = Expense;
-```
-
-4. **Authentication Controller (`controllers/authController.js`)**
-
-```javascript
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-
-exports.register = async (req, res) => {
-    const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create(username, hashedPassword);
-    res.status(201).json({ user });
-};
-
-exports.login = async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findByUsername(username);
-    if (user && await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-        res.json({ token });
-    } else {
-        res.status(401).json({ message: 'Invalid credentials' });
-    }
-};
-```
-
-5. **Expense Controller (`controllers/expenseController.js`)**
-
-```javascript
-const Expense = require('../models/Expense');
-
-exports.addExpense = async (req, res) => {
-    const { amount, description } = req.body;
-    const userId = req.user.id; // Assuming user ID is available in req.user
-    const expense = await Expense.create(userId, amount, description);
-    res.status(201).json({ expense });
-};
-
-exports.getExpenses = async (req, res) => {
-    const userId = req.user.id;
-    const expenses = await Expense.findByUserId(userId);
-    res.json({ expenses });
-};
-```
-
-6. **Routes (`routes/authRoutes.js` and `routes/expenseRoutes.js`)**
-
-```javascript
-// routes/authRoutes.js
-const express = require('express');
-const { register, login } = require('../controllers/authController');
-const router = express.Router();
-
-router.post('/register', register);
-router.post('/login', login);
-
-module.exports = router;
-
-// routes/expenseRoutes.js
-const express = require('express');
-const { addExpense, getExpenses } = require('../controllers/expenseController');
-const { authenticate } = require('../middleware/authMiddleware');
-const router = express.Router();
-
-router.post('/', authenticate, addExpense);
-router.get('/', authenticate, getExpenses);
-
-module.exports = router;
-```
-
-7. **Middleware for Authentication (`middleware/authMiddleware.js`)**
-
-```javascript
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-
-exports.authenticate = async (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.sendStatus(403);
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-};
-```
-
-8. **Server Setup (`server.js`)**
-
-```javascript
-const express = require('express');
-const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-const expenseRoutes = require('./routes/expenseRoutes');
-require('dotenv').config();
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.use('/api/auth', authRoutes);
-app.use('/api/expenses', expenseRoutes);
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-```
+Implement the authentication middleware in `middleware/authMiddleware.js`.
 
 ### Frontend Setup
 
@@ -211,205 +54,49 @@ app.listen(PORT, () => {
 ```bash
 npx create-react-app frontend
 cd frontend
-npm install axios react-router-dom chart.js react-chartjs-2
+npm install axios react-chartjs-2 chart.js react-icons react-router-dom
 ```
 
-2. **App Component (`src/App.js`)**
+2. **Project Structure**
 
-```javascript
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Login from './components/Login';
-import Register from './components/Register';
-import Dashboard from './components/Dashboard';
-
-function App() {
-    return (
-        <Router>
-            <Switch>
-                <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-                <Route path="/dashboard" component={Dashboard} />
-                <Route path="/" exact component={Login} />
-            </Switch>
-        </Router>
-    );
-}
-
-export default App;
+```
+expense-tracker/
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── server.js
+│   └── package.json
+└── frontend/
+    ├── public/
+    ├── src/
+    │   ├── components/
+    │   ├── api/
+    │   ├── config/
+    │   ├── styles/
+    │   ├── App.js
+    │   └── index.js
+    └── package.json
 ```
 
-3. **Login Component (`src/components/Login.js`)**
+## Running the Application
 
-```javascript
-import React, { useState } from 'react';
-import axios from 'axios';
-
-const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const response = await axios.post('http://localhost:5000/api/auth/login', { username, password });
-        localStorage.setItem('token', response.data.token);
-        // Redirect to dashboard
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-            <button type="submit">Login</button>
-        </form>
-    );
-};
-
-export default Login;
-```
-
-4. **Register Component (`src/components/Register.js`)**
-
-```javascript
-import React, { useState } from 'react';
-import axios from 'axios';
-
-const Register = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await axios.post('http://localhost:5000/api/auth/register', { username, password });
-        // Redirect to login
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-            <button type="submit">Register</button>
-        </form>
-    );
-};
-
-export default Register;
-```
-
-5. **Dashboard Component (`src/components/Dashboard.js`)**
-
-```javascript
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import ExpenseForm from './ExpenseForm';
-import { Bar } from 'react-chartjs-2';
-
-const Dashboard = () => {
-    const [expenses, setExpenses] = useState([]);
-
-    useEffect(() => {
-        const fetchExpenses = async () => {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/expenses', {
-                headers: { Authorization: token },
-            });
-            setExpenses(response.data.expenses);
-        };
-        fetchExpenses();
-    }, []);
-
-    const data = {
-        labels: expenses.map(exp => exp.description),
-        datasets: [{
-            label: 'Expenses',
-            data: expenses.map(exp => exp.amount),
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        }],
-    };
-
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            <ExpenseForm />
-            <Bar data={data} />
-        </div>
-    );
-};
-
-export default Dashboard;
-```
-
-6. **Expense Form Component (`src/components/ExpenseForm.js`)**
-
-```javascript
-import React, { useState } from 'react';
-import axios from 'axios';
-
-const ExpenseForm = () => {
-    const [amount, setAmount] = useState('');
-    const [description, setDescription] = useState('');
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('token');
-        await axios.post('http://localhost:5000/api/expenses', { amount, description }, {
-            headers: { Authorization: token },
-        });
-        // Optionally refresh the expenses list
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" required />
-            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" required />
-            <button type="submit">Add Expense</button>
-        </form>
-    );
-};
-
-export default ExpenseForm;
-```
-
-### Database Setup
-
-1. **Create the Database and Tables**
-
-```sql
-CREATE DATABASE expense_tracker;
-
-\c expense_tracker;
-
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE expenses (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    amount DECIMAL NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### Running the Application
-
-1. **Start the Backend**
-
-```bash
-cd backend
-node server.js
-```
-
-2. **Start the Frontend**
+1. **Start the Frontend**
 
 ```bash
 cd frontend
+npm run build
+```
+
+2. **Start the Backend**
+
+```bash
+cd backend
 npm start
 ```
 
-### Conclusion
 
-This is a basic structure for a mini expense tracker application using React, Node.js, and PostgreSQL. You can expand upon this by adding features like editing and deleting expenses, better error handling, and user feedback. Additionally, consider implementing more advanced security measures and user experience improvements.
+## Conclusion
+This project demonstrates a full-stack web application for tracking expenses with intelligent insights. It includes user authentication, expense management, and data visualization features.
