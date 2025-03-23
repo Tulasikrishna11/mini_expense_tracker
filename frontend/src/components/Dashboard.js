@@ -7,10 +7,10 @@ import './Dashboard.css'; // Import the CSS file
 
 const Dashboard = ({ onLogout }) => {
     const [expenses, setExpenses] = useState([]);
-    const [insights, setInsights] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [filteredExpenses, setFilteredExpenses] = useState([]);
 
     const fetchExpenses = async () => {
         const token = localStorage.getItem('token');
@@ -24,33 +24,24 @@ const Dashboard = ({ onLogout }) => {
         }
     };
 
-    const fetchInsights = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await axios.get('/expenses/insights', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setInsights(response.data.insights);
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             await fetchExpenses();
-            await fetchInsights();
             setLoading(false);
         };
         fetchData();
     }, []);
 
     const insightsData = {
-        labels: Object.keys(insights),
+        labels: [...new Set(filteredExpenses.map(expense => expense.category))],
         datasets: [{
             label: 'Spending Insights',
-            data: Object.values(insights).map(insight => insight.totalAmount),
+            data: [...new Set(filteredExpenses.map(expense => expense.category))].map(category => {
+                return filteredExpenses
+                    .filter(expense => expense.category === category)
+                    .reduce((acc, expense) => acc + parseFloat(expense.amount), 0);
+            }),
             backgroundColor: [
                 'rgba(255, 99, 132, 0.6)',
                 'rgba(54, 162, 235, 0.6)',
@@ -68,8 +59,9 @@ const Dashboard = ({ onLogout }) => {
                 callbacks: {
                     label: function (context) {
                         const label = context.label || '';
-                        const percentage = insights[label].percentage;
-                        const totalAmount = insights[label].totalAmount;
+                        const totalAmount = insightsData.datasets[0].data[context.dataIndex];
+                        const totalSpending = insightsData.datasets[0].data.reduce((acc, amount) => acc + amount, 0);
+                        const percentage = ((totalAmount / totalSpending) * 100).toFixed(2);
                         return `${label}: ${percentage}% (₹${totalAmount})`;
                     }
                 }
@@ -79,11 +71,10 @@ const Dashboard = ({ onLogout }) => {
 
     const handleExpenseAdded = () => {
         fetchExpenses();
-        fetchInsights();
         setShowForm(false);
     };
 
-    const totalAmount = Object.values(insights).reduce((acc, insight) => acc + insight.totalAmount, 0);
+    const totalAmount = filteredExpenses.reduce((acc, expense) => acc + parseFloat(expense.amount), 0);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -117,18 +108,20 @@ const Dashboard = ({ onLogout }) => {
                     <div className="header">
                         <button className="add-expense-button" onClick={() => setShowForm(true)}>Add Expense</button>
                     </div>
-                    <ExpenseList expenses={expenses} />
-                    <div className="insights-chart">
-                        <h2 className="insights-heading">Spending Insights</h2>
-                        <div className="chart-wrapper">
-                            <div className="chart-center">
-                                <Pie data={insightsData} options={options} />
+                    <ExpenseList expenses={expenses} setFilteredExpenses={setFilteredExpenses} />
+                    {filteredExpenses.length > 0 && (
+                        <div className="insights-chart">
+                            <h2 className="insights-heading">Spending Insights</h2>
+                            <div className="chart-wrapper">
+                                <div className="chart-center">
+                                    <Pie data={insightsData} options={options} />
+                                </div>
+                            </div>
+                            <div className="total-amount">
+                                <h3>Total Amount: ₹{totalAmount}</h3>
                             </div>
                         </div>
-                        <div className="total-amount">
-                            <h3>Total Amount: ₹{totalAmount}</h3>
-                        </div>
-                    </div>
+                    )}
                 </>
             )}
         </div>
