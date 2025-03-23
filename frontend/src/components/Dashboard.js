@@ -1,42 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../config/axiosConfig';
 import ExpenseForm from './ExpenseForm';
-import { Bar, Pie } from 'react-chartjs-2';
+import ExpenseList from './ExpenseList';
+import { Pie } from 'react-chartjs-2';
 import './Dashboard.css'; // Import the CSS file
 
 const Dashboard = () => {
     const [expenses, setExpenses] = useState([]);
     const [insights, setInsights] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showForm, setShowForm] = useState(false);
 
     const fetchExpenses = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/expenses', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setExpenses(response.data);
+        try {
+            const response = await axios.get('/expenses', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setExpenses(response.data);
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     const fetchInsights = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/expenses/insights', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setInsights(response.data.insights);
+        try {
+            const response = await axios.get('/expenses/insights', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setInsights(response.data.insights);
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     useEffect(() => {
-        fetchExpenses();
-        fetchInsights();
+        const fetchData = async () => {
+            setLoading(true);
+            await fetchExpenses();
+            await fetchInsights();
+            setLoading(false);
+        };
+        fetchData();
     }, []);
-
-    const data = {
-        labels: expenses.map(exp => exp.description),
-        datasets: [{
-            label: 'Expenses',
-            data: expenses.map(exp => exp.amount),
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        }],
-    };
 
     const insightsData = {
         labels: Object.keys(insights),
@@ -57,14 +65,47 @@ const Dashboard = () => {
     const handleExpenseAdded = () => {
         fetchExpenses();
         fetchInsights();
+        setShowForm(false);
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         <div className="dashboard">
             <h1>Dashboard</h1>
-            <ExpenseForm onExpenseAdded={handleExpenseAdded} />
-            <Bar data={data} />
-            <Pie data={insightsData} />
+            {showForm && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={() => setShowForm(false)}>&times;</span>
+                        <ExpenseForm onExpenseAdded={handleExpenseAdded} />
+                    </div>
+                </div>
+            )}
+            {expenses.length === 0 ? (
+                <div className="no-expenses">
+                    <p>No expenses available. Please add your first expense to get started.</p>
+                    <ExpenseForm onExpenseAdded={handleExpenseAdded} />
+                </div>
+            ) : (
+                <>
+                    <div className="header">
+                        <button className="add-expense-button" onClick={() => setShowForm(true)}>Add Expense</button>
+                    </div>
+                    <ExpenseList expenses={expenses} />
+                    <div className="insights-chart">
+                        <h2 className="insights-heading">Spending Insights</h2>
+                        <div className="chart-wrapper">
+                            <Pie data={insightsData} />
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

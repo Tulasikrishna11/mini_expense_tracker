@@ -5,7 +5,10 @@ exports.getExpenses = async (req, res) => {
     const userId = req.user.id; // Ensure this line is correct
 
     try {
-        const expenses = await Expense.findAll({ where: { userId } });
+        const expenses = await Expense.findAll({
+            where: { userId },
+            order: [['date', 'DESC']] // Sort by date in descending order
+        });
         res.json(expenses);
     } catch (err) {
         res.status(500).json({ error: err.message });
