@@ -1,8 +1,11 @@
 const Expense = require('../models/Expense');
+const { Op } = require('sequelize');
 
 exports.getExpenses = async (req, res) => {
+    const userId = req.user.id; // Ensure this line is correct
+
     try {
-        const expenses = await Expense.findAll({ where: { user_id: req.userId } });
+        const expenses = await Expense.findAll({ where: { userId } });
         res.json(expenses);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -10,20 +13,20 @@ exports.getExpenses = async (req, res) => {
 };
 
 exports.addExpense = async (req, res) => {
-    const { description, amount } = req.body;
-    if (isNaN(amount)) {
-        return res.status(400).json({ error: 'Amount must be a number' });
-    }
+    const { amount, category, date, description } = req.body;
+    const userId = req.user.id; // Ensure this line is correct
+
     try {
-        const newExpense = await Expense.create({ user_id: req.userId, amount, description });
-        res.status(201).json(newExpense);
+        const expense = await Expense.create({ userId, amount, category, date, description });
+        res.status(201).json(expense);
     } catch (err) {
+        console.log(err)
         res.status(500).json({ error: err.message });
     }
 };
 
 exports.updateExpense = async (req, res) => {
-    const { amount, description } = req.body;
+    const { amount, description, category, date } = req.body;
     const { id } = req.params;
     if (isNaN(amount)) {
         return res.status(400).json({ error: 'Amount must be a number' });
@@ -33,6 +36,8 @@ exports.updateExpense = async (req, res) => {
         if (expense) {
             expense.amount = amount;
             expense.description = description;
+            expense.category = category;
+            expense.date = date;
             await expense.save();
             res.json(expense);
         } else {

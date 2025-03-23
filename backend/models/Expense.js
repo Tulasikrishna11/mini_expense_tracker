@@ -1,25 +1,39 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
-const User = require('./User');
 
 const Expense = sequelize.define('Expense', {
-    amount: {
-        type: DataTypes.DECIMAL,
+    userId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        field: 'amount',
+        references: {
+            model: 'Users',
+            key: 'id'
+        },
+        field: 'user_id',
     },
-    description: {
+    amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+    },
+    category: {
         type: DataTypes.STRING,
         allowNull: false,
-        field: 'description',
+    },
+    date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        field: 'created_at',
     },
 }, {
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: false,
+    timestamps: false,
     tableName: 'Expenses',
 });
-
-Expense.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = Expense;
