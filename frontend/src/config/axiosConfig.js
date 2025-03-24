@@ -2,14 +2,11 @@ import axios from 'axios';
 
 const instance = axios.create({
     baseURL: `${window.location.origin}`,
-    withCredentials: true, // Add this line to send cookies with requests
+    withCredentials: true, // Ensure cookies are sent with requests
 });
 
 instance.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Remove token handling from headers
     return config;
 }, error => {
     return Promise.reject(error);

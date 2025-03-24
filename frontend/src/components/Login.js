@@ -14,8 +14,8 @@ const Login = ({ onLogin }) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.post('/auth/login', { email, password });
-            onLogin(response.data.token);
+            await axios.post('/auth/login', { email, password });
+            onLogin(); // Call onLogin without token
         } catch (err) {
             if (err.response && err.response.status === 404) {
                 setError('Invalid credentials'); 

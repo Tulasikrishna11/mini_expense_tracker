@@ -1,33 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import axios from './config/axiosConfig';
 
 const App = () => {
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const handleLogin = (token) => {
-        localStorage.setItem('token', token);
-        setToken(token);
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            try {
+                await axios.get('/auth/user');
+                setIsAuthenticated(true);
+            } catch (error) {
+                setIsAuthenticated(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkAuthStatus();
+    }, []);
+
+    const handleLogin = () => {
+        setIsAuthenticated(true);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setToken(null);
+    const handleLogout = async () => {
+        try {
+            await axios.post('/auth/logout');
+            setIsAuthenticated(false);
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Router>
             <Switch>
                 <Route path="/login">
-                    {token ? <Redirect to="/dashboard" /> : <Login onLogin={handleLogin} />}
+                    {isAuthenticated ? <Redirect to="/dashboard" /> : <Login onLogin={handleLogin} />}
                 </Route>
                 <Route path="/register">
-                    {token ? <Redirect to="/dashboard" /> : <Register />}
+                    {isAuthenticated ? <Redirect to="/dashboard" /> : <Register />}
                 </Route>
                 <Route path="/dashboard">
-                    {token ? <Dashboard onLogout={handleLogout} /> : <Redirect to="/login" />}
+                    {isAuthenticated ? <Dashboard onLogout={handleLogout} /> : <Redirect to="/login" />}
                 </Route>
                 <Route path="/">
                     <Redirect to="/login" />

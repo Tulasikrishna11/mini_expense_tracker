@@ -15,11 +15,8 @@ const Dashboard = ({ onLogout }) => {
     const [username, setUsername] = useState(''); // Add state for username
 
     const fetchExpenses = async () => {
-        const token = localStorage.getItem('token');
         try {
-            const response = await axios.get('/expenses', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await axios.get('/expenses');
             setExpenses(response.data);
         } catch (err) {
             setError(err.message);
@@ -27,11 +24,8 @@ const Dashboard = ({ onLogout }) => {
     };
 
     const fetchUser = async () => {
-        const token = localStorage.getItem('token');
         try {
-            const response = await axios.get('/auth/user', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await axios.get('/auth/user');
             setUsername(response.data.firstName); // Set the username
         } catch (err) {
             setError(err.message);

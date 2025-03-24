@@ -42,12 +42,14 @@
     font-size: 14px;
     color: var(--text-color-light);
     margin-top: 5px;
-    text-align: center; /* Center the description */
+    text-align: left; 
+    word-wrap: break-word; 
+    margin: 0px 10px;
 }
 
 .expense-actions {
     display: flex;
-    gap: 5px; /* Keep edit and delete icons together */
+    gap: 5px; 
 }
 
 .edit-icon, .delete-icon {
